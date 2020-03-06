@@ -173,6 +173,7 @@ class RoomsListView extends React.Component {
 		appStart: PropTypes.func,
 		roomsRequest: PropTypes.func,
 		closeServerDropdown: PropTypes.func,
+		useRealName: PropTypes.bool,
 		split: PropTypes.bool
 	};
 
@@ -182,6 +183,7 @@ class RoomsListView extends React.Component {
 		console.time(`${ this.constructor.name } mount`);
 
 		this.gotSubscriptions = false;
+		this.animated = false;
 		const { width } = Dimensions.get('window');
 		this.state = {
 			searching: false,
@@ -215,9 +217,11 @@ class RoomsListView extends React.Component {
 			}
 		});
 		this.didFocusListener = navigation.addListener('didFocus', () => {
+			this.animated = true;
 			this.backHandler = BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
 		});
 		this.willBlurListener = navigation.addListener('willBlur', () => {
+			this.animated = false;
 			closeServerDropdown();
 			if (this.backHandler && this.backHandler.remove) {
 				this.backHandler.remove();
@@ -338,12 +342,11 @@ class RoomsListView extends React.Component {
 		console.countReset(`${ this.constructor.name }.render calls`);
 	}
 
+	// eslint-disable-next-line react/sort-comp
 	onDimensionsChange = ({ window: { width } }) => this.setState({ width });
 
-	// eslint-disable-next-line react/sort-comp
 	internalSetState = (...args) => {
-		const { navigation } = this.props;
-		if (navigation.isFocused()) {
+		if (this.animated) {
 			animateNextTransition();
 		}
 		this.setState(...args);
@@ -521,6 +524,8 @@ class RoomsListView extends React.Component {
 
 	getRoomAvatar = item => RocketChat.getRoomAvatar(item)
 
+	getUserPresence = uid => RocketChat.getUserPresence(uid)
+
 	goRoom = (item) => {
 		const { navigation } = this.props;
 		this.cancelSearch();
@@ -532,7 +537,7 @@ class RoomsListView extends React.Component {
 			prid: item.prid,
 			room: item
 		});
-	};
+	}
 
 	_onPressItem = async(item = {}) => {
 		if (!item.search) {
@@ -755,6 +760,7 @@ class RoomsListView extends React.Component {
 			},
 			server,
 			StoreLastMessage,
+			useRealName,
 			theme,
 			split
 		} = this.props;
@@ -789,6 +795,8 @@ class RoomsListView extends React.Component {
 				toggleFav={this.toggleFav}
 				toggleRead={this.toggleRead}
 				hideChannel={this.hideChannel}
+				useRealName={useRealName}
+				getUserPresence={this.getUserPresence}
 			/>
 		);
 	};

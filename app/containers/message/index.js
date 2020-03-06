@@ -1,6 +1,6 @@
 import React from 'react';
-import { Keyboard } from 'react-native';
 import PropTypes from 'prop-types';
+import { KeyboardUtils } from 'react-native-keyboard-input';
 
 import Message from './Message';
 import debounce from '../../utils/debounce';
@@ -28,7 +28,6 @@ class MessageContainer extends React.Component {
 		isReadReceiptEnabled: PropTypes.bool,
 		isThreadRoom: PropTypes.bool,
 		useRealName: PropTypes.bool,
-		useMarkdown: PropTypes.bool,
 		autoTranslateRoom: PropTypes.bool,
 		autoTranslateLanguage: PropTypes.string,
 		status: PropTypes.number,
@@ -51,7 +50,20 @@ class MessageContainer extends React.Component {
 	}
 
 	static defaultProps = {
+		getCustomEmoji: () => {},
 		onLongPress: () => {},
+		onReactionPress: () => {},
+		onDiscussionPress: () => {},
+		onThreadPress: () => {},
+		errorActionsShow: () => {},
+		replyBroadcast: () => {},
+		reactionInit: () => {},
+		fetchThreadName: () => {},
+		showAttachment: () => {},
+		onReactionLongPress: () => {},
+		navToRoomInfo: () => {},
+		callJitsi: () => {},
+		blockAction: () => {},
 		archived: false,
 		broadcast: false,
 		theme: 'light'
@@ -86,7 +98,7 @@ class MessageContainer extends React.Component {
 
 	onPress = debounce(() => {
 		const { item, isThreadRoom } = this.props;
-		Keyboard.dismiss();
+		KeyboardUtils.dismiss();
 
 		if (((item.tlm || item.tmid) && !isThreadRoom)) {
 			this.onThreadPress();
@@ -257,7 +269,7 @@ class MessageContainer extends React.Component {
 
 	render() {
 		const {
-			item, user, style, archived, baseUrl, useRealName, broadcast, fetchThreadName, customThreadTimeFormat, showAttachment, timeFormat, useMarkdown, isReadReceiptEnabled, autoTranslateRoom, autoTranslateLanguage, navToRoomInfo, getCustomEmoji, isThreadRoom, callJitsi, blockAction, rid, theme
+			item, user, style, archived, baseUrl, useRealName, broadcast, fetchThreadName, customThreadTimeFormat, showAttachment, timeFormat, isReadReceiptEnabled, autoTranslateRoom, autoTranslateLanguage, navToRoomInfo, getCustomEmoji, isThreadRoom, callJitsi, blockAction, rid, theme
 		} = this.props;
 		const {
 			id, msg, ts, attachments, urls, reactions, avatar, t, u, alias, editedBy, role, drid, dcount, dlm, tmid, tcount, tlm, tmsg, mentions, channels, unread, blocks, autoTranslate: autoTranslateMessage
@@ -302,7 +314,6 @@ class MessageContainer extends React.Component {
 				tcount={tcount}
 				tlm={tlm}
 				tmsg={tmsg}
-				useMarkdown={useMarkdown}
 				fetchThreadName={fetchThreadName}
 				mentions={mentions}
 				channels={channels}

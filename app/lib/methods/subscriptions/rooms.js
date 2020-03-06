@@ -1,4 +1,5 @@
 import { sanitizedRaw } from '@nozbe/watermelondb/RawRecord';
+import { InteractionManager } from 'react-native';
 
 import database from '../../database';
 import { merge } from '../helpers/mergeSubscriptionsRooms';
@@ -12,6 +13,8 @@ import { notificationReceived } from '../../../actions/notification';
 import { handlePayloadUserInteraction } from '../actions';
 import buildMessage from '../helpers/buildMessage';
 import RocketChat from '../../rocketchat';
+import EventEmmiter from '../../../utils/events';
+import { deleteRoomFinish } from '../../../actions/room';
 
 const removeListener = listener => listener.stop();
 
@@ -23,7 +26,7 @@ let subQueue = {};
 let subTimer = null;
 let roomQueue = {};
 let roomTimer = null;
-const WINDOW_TIME = 1000;
+const WINDOW_TIME = 500;
 
 const createOrUpdateSubscription = async(subscription, room) => {
 	try {
@@ -176,7 +179,9 @@ const debouncedUpdateSub = (subscription) => {
 			subQueue = {};
 			subTimer = null;
 			Object.keys(subBatch).forEach((key) => {
-				createOrUpdateSubscription(subBatch[key]);
+				InteractionManager.runAfterInteractions(() => {
+					createOrUpdateSubscription(subBatch[key]);
+				});
 			});
 		}, WINDOW_TIME);
 	}
@@ -190,7 +195,9 @@ const debouncedUpdateRoom = (room) => {
 			roomQueue = {};
 			roomTimer = null;
 			Object.keys(roomBatch).forEach((key) => {
-				createOrUpdateSubscription(null, roomBatch[key]);
+				InteractionManager.runAfterInteractions(() => {
+					createOrUpdateSubscription(null, roomBatch[key]);
+				});
 			});
 		}, WINDOW_TIME);
 	}
@@ -233,6 +240,15 @@ export default function subscribeRooms() {
 							...threadMessagesToDelete
 						);
 					});
+
+					const roomState = store.getState().room;
+					// Delete and remove events come from this stream
+					// Here we identify which one was triggered
+					if (data.rid === roomState.rid && roomState.isDeleting) {
+						store.dispatch(deleteRoomFinish());
+					} else {
+						EventEmmiter.emit('ROOM_REMOVED', { rid: data.rid });
+					}
 				} catch (e) {
 					log(e);
 				}
@@ -278,10 +294,9 @@ export default function subscribeRooms() {
 			const [notification] = ddpMessage.fields.args;
 			try {
 				const { payload: { rid } } = notification;
-				const subCollection = db.collections.get('subscriptions');
-				const sub = await subCollection.find(rid);
-				notification.title = RocketChat.getRoomTitle(sub);
-				notification.avatar = RocketChat.getRoomAvatar(sub);
+				const room = await RocketChat.getRoom(rid);
+				notification.title = RocketChat.getRoomTitle(room);
+				notification.avatar = RocketChat.getRoomAvatar(room);
 			} catch (e) {
 				// do nothing
 			}

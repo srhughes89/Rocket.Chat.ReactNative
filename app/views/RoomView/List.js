@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import orderBy from 'lodash/orderBy';
 import { Q } from '@nozbe/watermelondb';
 import moment from 'moment';
+import isEqual from 'lodash/isEqual';
 
 import styles from './styles';
 import database from '../../lib/database';
@@ -25,9 +26,10 @@ class List extends React.Component {
 		rid: PropTypes.string,
 		t: PropTypes.string,
 		tmid: PropTypes.string,
-		animated: PropTypes.bool,
 		theme: PropTypes.string,
-		listRef: PropTypes.func
+		listRef: PropTypes.func,
+		hideSystemMessages: PropTypes.array,
+		navigation: PropTypes.object
 	};
 
 	constructor(props) {
@@ -40,9 +42,17 @@ class List extends React.Component {
 			loading: true,
 			end: false,
 			messages: [],
-			refreshing: false
+			refreshing: false,
+			animated: false
 		};
 		this.init();
+		this.didFocusListener = props.navigation.addListener('didFocus', () => {
+			if (this.mounted) {
+				this.setState({ animated: true });
+			} else {
+				this.state.animated = true;
+			}
+		});
 		console.timeEnd(`${ this.constructor.name } init`);
 	}
 
@@ -56,6 +66,12 @@ class List extends React.Component {
 		const { rid, tmid } = this.props;
 		const db = database.active;
 
+		// handle servers with version < 3.0.0
+		let { hideSystemMessages = [] } = this.props;
+		if (!Array.isArray(hideSystemMessages)) {
+			hideSystemMessages = [];
+		}
+
 		if (tmid) {
 			try {
 				this.thread = await db.collections
@@ -66,12 +82,12 @@ class List extends React.Component {
 			}
 			this.messagesObservable = db.collections
 				.get('thread_messages')
-				.query(Q.where('rid', tmid))
+				.query(Q.where('rid', tmid), Q.or(Q.where('t', Q.notIn(hideSystemMessages)), Q.where('t', Q.eq(null))))
 				.observe();
 		} else if (rid) {
 			this.messagesObservable = db.collections
 				.get('messages')
-				.query(Q.where('rid', rid))
+				.query(Q.where('rid', rid), Q.or(Q.where('t', Q.notIn(hideSystemMessages)), Q.where('t', Q.eq(null))))
 				.observe();
 		}
 
@@ -94,6 +110,12 @@ class List extends React.Component {
 		}
 	}
 
+	// eslint-disable-next-line react/sort-comp
+	reload = () => {
+		this.unsubscribeMessages();
+		this.init();
+	}
+
 	// this.state.loading works for this.onEndReached and RoomView.init
 	static getDerivedStateFromProps(props, state) {
 		if (props.loading !== state.loading) {
@@ -106,7 +128,7 @@ class List extends React.Component {
 
 	shouldComponentUpdate(nextProps, nextState) {
 		const { loading, end, refreshing } = this.state;
-		const { theme } = this.props;
+		const { hideSystemMessages, theme } = this.props;
 		if (theme !== nextProps.theme) {
 			return true;
 		}
@@ -119,7 +141,17 @@ class List extends React.Component {
 		if (refreshing !== nextState.refreshing) {
 			return true;
 		}
+		if (!isEqual(hideSystemMessages, nextProps.hideSystemMessages)) {
+			return true;
+		}
 		return false;
+	}
+
+	componentDidUpdate(prevProps) {
+		const { hideSystemMessages } = this.props;
+		if (!isEqual(hideSystemMessages, prevProps.hideSystemMessages)) {
+			this.reload();
+		}
 	}
 
 	componentWillUnmount() {
@@ -129,6 +161,9 @@ class List extends React.Component {
 		}
 		if (this.onEndReached && this.onEndReached.stop) {
 			this.onEndReached.stop();
+		}
+		if (this.didFocusListener && this.didFocusListener.remove) {
+			this.didFocusListener.remove();
 		}
 		console.countReset(`${ this.constructor.name }.render calls`);
 	}
@@ -180,7 +215,10 @@ class List extends React.Component {
 
 	// eslint-disable-next-line react/sort-comp
 	update = () => {
-		animateNextTransition();
+		const { animated } = this.state;
+		if (animated) {
+			animateNextTransition();
+		}
 		this.forceUpdate();
 	};
 
