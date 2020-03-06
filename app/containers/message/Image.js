@@ -13,7 +13,6 @@ import { formatAttachmentUrl } from '../../lib/utils';
 import { withSplit } from '../../split';
 import { themes } from '../../constants/colors';
 import sharedStyles from '../../views/Styles';
-import User from './User';
 
 const ImageProgress = createImageProgress(FastImage);
 
@@ -56,9 +55,7 @@ const ImageContainer = React.memo(({
 			<Button split={split} theme={theme} onPress={onPress}>
 				<View>
 					<MessageImage img={img} theme={theme} />
-					<View style={styles.imageDesc}>
 					<Markdown msg={file.description} baseUrl={baseUrl} username={user.username} getCustomEmoji={getCustomEmoji} theme={theme} />
-					</View>
 				</View>
 			</Button>
 		);

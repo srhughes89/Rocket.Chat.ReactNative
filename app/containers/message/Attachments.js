@@ -8,7 +8,7 @@ import Video from './Video';
 import Reply from './Reply';
 
 const Attachments = React.memo(({
-	attachments, timeFormat, user, baseUrl, showAttachment, getCustomEmoji, theme, room, isSender
+	attachments, timeFormat, user, baseUrl, showAttachment, getCustomEmoji, theme
 }) => {
 	if (!attachments || attachments.length === 0) {
 		return null;
@@ -19,7 +19,7 @@ const Attachments = React.memo(({
 			return <Image key={file.image_url} file={file} user={user} baseUrl={baseUrl} showAttachment={showAttachment} getCustomEmoji={getCustomEmoji} theme={theme} />;
 		}
 		if (file.audio_url) {
-			return <Audio key={file.audio_url} file={file} user={user} baseUrl={baseUrl} getCustomEmoji={getCustomEmoji} theme={theme} isSender={isSender} />;
+			return <Audio key={file.audio_url} file={file} user={user} baseUrl={baseUrl} getCustomEmoji={getCustomEmoji} theme={theme} />;
 		}
 		if (file.video_url) {
 			return <Video key={file.video_url} file={file} user={user} baseUrl={baseUrl} showAttachment={showAttachment} getCustomEmoji={getCustomEmoji} theme={theme} />;
@@ -37,9 +37,7 @@ Attachments.propTypes = {
 	baseUrl: PropTypes.string,
 	showAttachment: PropTypes.func,
 	getCustomEmoji: PropTypes.func,
-	theme: PropTypes.string,
-	room: PropTypes.string,
-	isSender: PropTypes.bool
+	theme: PropTypes.string
 };
 Attachments.displayName = 'MessageAttachments';
 

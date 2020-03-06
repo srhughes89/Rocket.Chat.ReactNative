@@ -15,8 +15,6 @@ import sharedStyles from '../../views/Styles';
 import { themes } from '../../constants/colors';
 import { isAndroid, isIOS } from '../../utils/deviceInfo';
 import { withSplit } from '../../split';
-import User from './User';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const styles = StyleSheet.create({
 	audioContainer: {
@@ -25,32 +23,21 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		height: 56,
 		borderWidth: 1,
-		borderRadius: 15,
-		marginBottom: -16
-	},
-	playPauseButtonBackground: {
-		marginHorizontal: 5,
-		borderRadius: 20,
-		width: 40,
-		height: 40	
+		borderRadius: 4,
+		marginBottom: 6
 	},
 	playPauseButton: {
-		paddingTop: 6,
-		paddingLeft: 2,
+		marginHorizontal: 10,
 		alignItems: 'center',
-		justifyContent: 'center'
+		backgroundColor: 'transparent'
 	},
 	slider: {
-		flex: 1,
-		marginRight: 15
+		flex: 1
 	},
 	duration: {
-		marginHorizontal: 10,
-		fontSize: 12,
-		...sharedStyles.textRegular,
-		position: 'absolute',
-		bottom: 8,
-		left: 42
+		marginHorizontal: 12,
+		fontSize: 14,
+		...sharedStyles.textRegular
 	}
 });
 
@@ -64,17 +51,15 @@ const sliderAnimationConfig = {
 	delay: 0
 };
 
-const Button = React.memo(({ paused, onPress, theme, isSender }) => (
-	<View style={[styles.playPauseButtonBackground, { backgroundColor: themes[theme].senderTintColor }]}>
-		<Touchable
-			style={styles.playPauseButton}
-			onPress={onPress}
-			hitSlop={BUTTON_HIT_SLOP}
-			background={Touchable.SelectableBackgroundBorderless()}
-		>
-			{isSender ? <Icon name={paused ? 'play' : 'pause'} size={28} color={themes[theme].buttonText} /> : <Icon name={paused ? 'play' : 'pause'} size={28} color={themes[theme].buttonText} />}
-		</Touchable>
-	</View>
+const Button = React.memo(({ paused, onPress, theme }) => (
+	<Touchable
+		style={styles.playPauseButton}
+		onPress={onPress}
+		hitSlop={BUTTON_HIT_SLOP}
+		background={Touchable.SelectableBackgroundBorderless()}
+	>
+		<CustomIcon name={paused ? 'play' : 'pause'} size={36} color={themes[theme].tintColor} />
+	</Touchable>
 ));
 
 Button.propTypes = {
@@ -93,6 +78,7 @@ class Audio extends React.Component {
 		split: PropTypes.bool,
 		getCustomEmoji: PropTypes.func
 	}
+
 	constructor(props) {
 		super(props);
 		const { baseUrl, file, user } = props;
@@ -170,7 +156,7 @@ class Audio extends React.Component {
 			uri, paused, currentTime, duration
 		} = this.state;
 		const {
-			user, baseUrl, file, getCustomEmoji, split, theme, isSender, room
+			user, baseUrl, file, getCustomEmoji, split, theme
 		} = this.props;
 		const { description } = file;
 
@@ -180,19 +166,12 @@ class Audio extends React.Component {
 
 		return (
 			<>
-
 				<View
-					style={ isSender ?
-						[styles.audioContainer,
-						{ backgroundColor: themes[theme].senderBubble, borderColor: themes[theme].senderBubble },
-						split && sharedStyles.tabletContent]
-						
-						:
-
-						[styles.audioContainer,
-						{ backgroundColor: themes[theme].receiverBubble, borderColor: themes[theme].receiverBubble },
-						split && sharedStyles.tabletContent]
-					}
+					style={[
+						styles.audioContainer,
+						{ backgroundColor: themes[theme].chatComponentBackground, borderColor: themes[theme].borderColor },
+						split && sharedStyles.tabletContent
+					]}
 				>
 					<Video
 						ref={this.setRef}
@@ -203,7 +182,7 @@ class Audio extends React.Component {
 						paused={paused}
 						repeat={false}
 					/>
-					<Button paused={paused} onPress={this.togglePlayPause} theme={theme} isSender={isSender} />
+					<Button paused={paused} onPress={this.togglePlayPause} theme={theme} />
 					<Slider
 						style={styles.slider}
 						value={currentTime}
@@ -211,18 +190,18 @@ class Audio extends React.Component {
 						minimumValue={0}
 						animateTransitions
 						animationConfig={sliderAnimationConfig}
-						thumbTintColor={isSender ? isAndroid && themes[theme].senderTintColor : isAndroid && themes[theme].receiverTintColor}
-						minimumTrackTintColor={isSender ? themes[theme].senderTintColor : themes[theme].receiverTintColor}
-						maximumTrackTintColor={isSender ? themes[theme].auxiliaryTintColor : themes[theme].auxiliaryTintColor}
+						thumbTintColor={isAndroid && themes[theme].tintColor}
+						minimumTrackTintColor={themes[theme].tintColor}
+						maximumTrackTintColor={themes[theme].auxiliaryText}
 						onValueChange={this.onValueChange}
-						thumbImage={isSender ? { uri: 'audio_thumb_blue', scale: Dimensions.get('window').scale } : { uri: 'audio_thumb', scale: Dimensions.get('window').scale }}
+						thumbImage={isIOS && { uri: 'audio_thumb', scale: Dimensions.get('window').scale }}
 					/>
-					
+					<Text style={[styles.duration, { color: themes[theme].auxiliaryText }]}>{this.duration}</Text>
 				</View>
-				{isSender ? <Text style={[styles.duration, { color: themes[theme].senderBubbleText }]}>{this.duration}</Text> : <Text style={[styles.duration, { color: themes[theme].receiverBubbleText }]}>{formatTime(currentTime)}</Text>}					
 				<Markdown msg={description} baseUrl={baseUrl} username={user.username} getCustomEmoji={getCustomEmoji} theme={theme} />
 			</>
 		);
 	}
 }
+
 export default withSplit(Audio);
