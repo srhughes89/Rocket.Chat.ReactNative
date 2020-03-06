@@ -7,34 +7,18 @@ export default StyleSheet.create({
 	root: {
 		flexDirection: 'row'
 	},
-	container: {	
+	container: {
 		paddingVertical: 4,
 		width: '100%',
 		paddingHorizontal: 14,
 		flexDirection: 'column'
 	},
-	messageContentReceiver: {
-		marginRight: 60,
-		borderRadius: 15,
-		padding: 10,
-		borderWidth: .5
-	},
-	messageContentReceiverAttachment: {
+	messageContent: {
 		flex: 1,
-		marginRight: 120
-	},
-	messageContentSenderAttachment: {
-		flex: 1,
-		marginLeft: 120
-	},
-	messageContentSender: {
-		marginLeft: 80,
-		borderRadius: 15,
-		padding: 10,
-		borderWidth: .5
+		marginLeft: 46
 	},
 	messageContentWithHeader: {
-		marginLeft: 12
+		marginLeft: 10
 	},
 	messageContentWithError: {
 		marginLeft: 0
@@ -44,9 +28,7 @@ export default StyleSheet.create({
 	},
 	flex: {
 		flexDirection: 'row'
-	},
-	flexReverse: {
-		flexDirection: 'row-reverse'
+		// flex: 1
 	},
 	temp: { opacity: 0.3 },
 	marginTop: {
@@ -126,21 +108,10 @@ export default StyleSheet.create({
 	},
 	image: {
 		width: '100%',
+		// maxWidth: 400,
 		minHeight: isTablet ? 300 : 200,
 		borderRadius: 4,
-		borderWidth: 1,
-		marginBottom: -18
-	},
-	imageDesc: {
-		width: '100%',
-		borderBottomLeftRadius: 10,
-		borderBottomRightRadius: 10,
-		borderWidth: 1,
-		paddingLeft: 5,
-		top: 6,
-		marginBottom: -8,
-		backgroundColor: '#20303f',
-		borderColor: '#20303f'
+		borderWidth: 1
 	},
 	imagePressed: {
 		opacity: 0.5
@@ -167,8 +138,8 @@ export default StyleSheet.create({
 	},
 	time: {
 		fontSize: 12,
-		paddingLeft: 2,
-		lineHeight: 18,
+		paddingLeft: 10,
+		lineHeight: 22,
 		...sharedStyles.textRegular,
 		fontWeight: '300'
 	},
@@ -189,6 +160,6 @@ export default StyleSheet.create({
 		...sharedStyles.textRegular
 	},
 	readReceipt: {
-		lineHeight: 18
+		lineHeight: 20
 	}
 });

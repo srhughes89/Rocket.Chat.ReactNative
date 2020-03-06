@@ -741,6 +741,7 @@ class RoomView extends React.Component {
 		const message = (
 			<Message
 				item={item}
+				roomType={room.t}
 				user={user}
 				rid={room.rid}
 				archived={room.archived}

@@ -3,15 +3,11 @@ import PropTypes from 'prop-types';
 
 import { themes } from '../../constants/colors';
 import { CustomIcon } from '../../lib/Icons';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import styles from './styles';
 
 const ReadReceipt = React.memo(({ isReadReceiptEnabled, unread, theme }) => {
-	if (isReadReceiptEnabled && unread) {
-		return <Icon name='check' size={16} style={styles.readReceipt} />;
-	}
 	if (isReadReceiptEnabled && !unread && unread !== null) {
-		return <Icon name='check-all' size={16} style={styles.readReceipt} />;
+		return <CustomIcon name='check' color={themes[theme].tintColor} size={15} style={styles.readReceipt} />;
 	}
 	return null;
 });

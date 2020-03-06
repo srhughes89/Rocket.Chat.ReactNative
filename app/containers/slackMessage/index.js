@@ -46,8 +46,7 @@ class MessageContainer extends React.Component {
 		navToRoomInfo: PropTypes.func,
 		callJitsi: PropTypes.func,
 		blockAction: PropTypes.func,
-		theme: PropTypes.string,
-		roomType: PropTypes.string
+		theme: PropTypes.string
 	}
 
 	static defaultProps = {
@@ -68,10 +67,7 @@ class MessageContainer extends React.Component {
 	}
 
 	shouldComponentUpdate(nextProps) {
-		const { theme, roomType } = this.props;
-		if (nextProps.roomType !== roomType) {
-			return true;
-		}
+		const { theme } = this.props;
 		if (nextProps.theme !== theme) {
 			return true;
 		}
@@ -161,45 +157,6 @@ class MessageContainer extends React.Component {
 		}
 	}
 
-	get isSender() {
-		const {
-			item, user
-		} = this.props;
-			if (user.username === item.u.username) {
-				return true;
-			}
-			return false;
-	}
-
-	get hasAttachment() {
-		const {
-			item, user
-		} = this.props;
-
-			if (item.attachments && Object.keys(item.attachments).length) {
-				return true;
-			}
-			return false;
-	}
-
-
-	get roomType() {
-		const { roomType } = this.props;
-
-		if (roomType === 'd') {
-			return "direct";
-		}
-		if (roomType === 'c') {
-			return 'channel'
-		}
-		if (roomType === 'p') {
-			return 'private'
-		}
-		if (roomType === 'l') {
-			return 'liveChat'
-		}
-	}
-
 	get isThreadReply() {
 		const {
 			item, previousItem, isThreadRoom
@@ -260,7 +217,7 @@ class MessageContainer extends React.Component {
 			item, user, style, archived, baseUrl, useRealName, broadcast, fetchThreadName, customThreadTimeFormat, showAttachment, timeFormat, useMarkdown, isReadReceiptEnabled, autoTranslateRoom, autoTranslateLanguage, navToRoomInfo, getCustomEmoji, isThreadRoom, callJitsi, blockAction, rid, theme
 		} = this.props;
 		const {
-			id, msg, ts, attachments, urls, reactions, avatar, t, u, alias, editedBy, role, drid, dcount, dlm, tmid, tcount, tlm, tmsg, mentions, channels, unread, blocks, autoTranslate: autoTranslateMessage
+			id, msg, ts, attachments, urls, reactions, t, avatar, u, alias, editedBy, role, drid, dcount, dlm, tmid, tcount, tlm, tmsg, mentions, channels, unread, blocks, autoTranslate: autoTranslateMessage
 		} = item;
 
 		let message = msg;
@@ -308,9 +265,6 @@ class MessageContainer extends React.Component {
 				channels={channels}
 				isEdited={editedBy && !!editedBy.username}
 				isHeader={this.isHeader}
-				roomType={this.roomType}
-				isSender={this.isSender}
-				hasAttachment={this.hasAttachment}
 				isThreadReply={this.isThreadReply}
 				isThreadSequential={this.isThreadSequential}
 				isThreadRoom={isThreadRoom}

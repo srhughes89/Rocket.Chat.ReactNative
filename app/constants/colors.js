@@ -46,10 +46,17 @@ export const themes = {
 		messageboxBackground: '#ffffff',
 		searchboxBackground: '#E6E6E7',
 		buttonBackground: '#414852',
-		buttonText: '#ffffff'
+		buttonText: '#ffffff',
+		bubbleText: '#000000',
+		senderBubbleText: '#000000',
+		receiverBubbleText: '#000000',
+		senderBubble: '#2d74f588',
+		receiverBubble: '#f1f0f5',
+		senderTintColor: '#4C91DF',
+		receiverTintColor: '#007EE5'
 	},
 	dark: {
-		backgroundColor: '#030b1b',
+		backgroundColor: '#151e27',
 		focusedBackground: '#0b182c',
 		chatComponentBackground: '#192132',
 		auxiliaryBackground: '#07101e',
@@ -66,7 +73,7 @@ export const themes = {
 		tintColor: '#1d74f5',
 		auxiliaryTintColor: '#cdcdcd',
 		actionTintColor: '#1d74f5',
-		separatorColor: '#2b2b2d',
+		separatorColor: '#232E3B',
 		navbarBackground: '#0b182c',
 		headerBorder: '#2F3A4B',
 		headerBackground: '#0b182c',
@@ -81,10 +88,17 @@ export const themes = {
 		messageboxBackground: '#0b182c',
 		searchboxBackground: '#192d4d',
 		buttonBackground: '#414852',
-		buttonText: '#ffffff'
+		buttonText: '#ffffff',
+		bubbleText: '#ffffff',
+		senderBubbleText: '#ffffff',
+		receiverBubbleText: '#ffffff',
+		senderBubble: '#3e618a',
+		receiverBubble: '#232E3B',
+		senderTintColor: '#4C91DF',
+		receiverTintColor: '#3685FA'
 	},
 	black: {
-		backgroundColor: '#000000',
+		backgroundColor: '#070707',
 		focusedBackground: '#0d0d0d',
 		chatComponentBackground: '#16181a',
 		auxiliaryBackground: '#080808',
@@ -101,7 +115,7 @@ export const themes = {
 		tintColor: '#1e9bfe',
 		auxiliaryTintColor: '#cdcdcd',
 		actionTintColor: '#1ea1fe',
-		separatorColor: '#272728',
+		separatorColor: '#262628',
 		navbarBackground: '#0d0d0d',
 		headerBorder: '#323232',
 		headerBackground: '#0d0d0d',
@@ -116,6 +130,13 @@ export const themes = {
 		messageboxBackground: '#0d0d0d',
 		searchboxBackground: '#1f1f1f',
 		buttonBackground: '#414852',
-		buttonText: '#ffffff'
+		buttonText: '#ffffff',
+		bubbleText: '#ffffff',
+		senderBubbleText: '#ffffff',
+		receiverBubbleText: '#ffffff',
+		senderBubble: '#3e618a',
+		receiverBubble: '#262628',
+		senderTintColor: '#3685FA',
+		receiverTintColor: '#007AFF'
 	}
 };
