@@ -89,7 +89,6 @@ class Audio extends React.Component {
 		file: PropTypes.object.isRequired,
 		baseUrl: PropTypes.string.isRequired,
 		user: PropTypes.object.isRequired,
-		useMarkdown: PropTypes.bool,
 		theme: PropTypes.string,
 		split: PropTypes.bool,
 		getCustomEmoji: PropTypes.func
@@ -171,7 +170,7 @@ class Audio extends React.Component {
 			uri, paused, currentTime, duration
 		} = this.state;
 		const {
-			user, baseUrl, file, getCustomEmoji, useMarkdown, split, theme, isSender, room
+			user, baseUrl, file, getCustomEmoji, split, theme, isSender, room
 		} = this.props;
 		const { description } = file;
 
@@ -221,7 +220,7 @@ class Audio extends React.Component {
 					
 				</View>
 				{isSender ? <Text style={[styles.duration, { color: themes[theme].senderBubbleText }]}>{this.duration}</Text> : <Text style={[styles.duration, { color: themes[theme].receiverBubbleText }]}>{formatTime(currentTime)}</Text>}					
-				<Markdown msg={description} baseUrl={baseUrl} username={user.username} getCustomEmoji={getCustomEmoji} useMarkdown={useMarkdown} theme={theme} />
+				<Markdown msg={description} baseUrl={baseUrl} username={user.username} getCustomEmoji={getCustomEmoji} theme={theme} />
 			</>
 		);
 	}

@@ -42,7 +42,7 @@ export const MessageImage = React.memo(({ img, theme }) => (
 ));
 
 const ImageContainer = React.memo(({
-	file, imageUrl, baseUrl, user, useMarkdown, showAttachment, getCustomEmoji, split, theme
+	file, imageUrl, baseUrl, user, showAttachment, getCustomEmoji, split, theme
 }) => {
 	const img = imageUrl || formatAttachmentUrl(file.image_url, user.id, user.token, baseUrl);
 	if (!img) {
@@ -57,7 +57,7 @@ const ImageContainer = React.memo(({
 				<View>
 					<MessageImage img={img} theme={theme} />
 					<View style={styles.imageDesc}>
-					<Markdown msg={file.description} baseUrl={baseUrl} username={user.username} getCustomEmoji={getCustomEmoji} useMarkdown={useMarkdown} theme={theme} />
+					<Markdown msg={file.description} baseUrl={baseUrl} username={user.username} getCustomEmoji={getCustomEmoji} theme={theme} />
 					</View>
 				</View>
 			</Button>
@@ -76,7 +76,6 @@ ImageContainer.propTypes = {
 	imageUrl: PropTypes.string,
 	baseUrl: PropTypes.string,
 	user: PropTypes.object,
-	useMarkdown: PropTypes.bool,
 	showAttachment: PropTypes.func,
 	theme: PropTypes.string,
 	getCustomEmoji: PropTypes.func,
